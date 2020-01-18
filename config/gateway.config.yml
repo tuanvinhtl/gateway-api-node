@@ -1,0 +1,65 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  api:
+    host: 52.77.224.71
+    paths: '/ip'
+  user:
+    host: 52.77.224.71
+    paths: '/api/user/*'
+  users:
+    host: 52.77.224.71
+    paths: '/api/users/*'
+serviceEndpoints:
+  httpbin:
+    url: 'https://httpbin.org'
+  http_user:
+    url: 'http://localhost:3000'
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+  - jwt
+  - scopes
+pipelines:
+  default:
+    apiEndpoints:
+      - api
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: httpbin 
+              changeOrigin: true
+
+  default-0:
+    apiEndpoints:
+      - user
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: http_user 
+              changeOrigin: true
+
+  defaul-1:
+    apiEndpoints:
+      - users
+    policies:
+      - scopes:
+      - jwt:
+          - action:
+              secretOrPublicKey: '0vMrWkOO5xp6syvn7PUq7F'
+              checkCredentialExistence : false
+      - proxy:
+          - action:
+              serviceEndpoint: http_user 
+              changeOrigin: true
