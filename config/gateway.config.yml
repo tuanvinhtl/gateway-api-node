@@ -4,6 +4,9 @@ admin:
   port: 9876
   host: localhost
 apiEndpoints:
+  web:
+    host: 52.77.224.71
+    paths: '/'
   api:
     host: 52.77.224.71
     paths: '/ip'
@@ -18,6 +21,8 @@ serviceEndpoints:
     url: 'https://httpbin.org'
   http_user:
     url: 'http://localhost:3000'
+  http_web:
+    url: 'http://localhost:8082'
 policies:
   - basic-auth
   - cors
@@ -62,4 +67,15 @@ pipelines:
       - proxy:
           - action:
               serviceEndpoint: http_user 
+              changeOrigin: true
+
+  default-2:
+    apiEndpoints:
+      - web
+    policies:
+    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+    # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: http_web 
               changeOrigin: true
